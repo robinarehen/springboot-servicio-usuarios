@@ -34,6 +34,7 @@ public class UsuarioEntity implements Serializable {
 	private Long ID;
 	@Column(unique = true, length = 20)
 	private String userName;
+	@Column(length = 100)
 	private String userPassword;
 	private Boolean enabled;
 	@Column(length = 50)
