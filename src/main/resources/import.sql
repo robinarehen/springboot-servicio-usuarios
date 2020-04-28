@@ -1,5 +1,5 @@
-insert into usuarios (user_name, user_password, enabled, nombre, apellidos, email) values ('robinare', '$2a$10$yksquDoARWlYwDClkQaKO.mDKmtmMbUygyvvARs9Uy7.7pkUo0Ee2', 1, 'Robin', 'Arellano', 'robinare@gmail.com');
-insert into usuarios (user_name, user_password, enabled, nombre, apellidos, email) values ('argenitare', '$2a$10$0syuvatGMK6C1EkNoUNCoeD2r/1sjmXSYYM3se9R4yFq4U1L7uKDy', 1, 'Argenit', 'Arellano', 'argenitare@gmail.com');
+insert into usuarios (user_name, user_password, enabled, nombre, apellidos, email) values ('robinare', '$2a$10$yksquDoARWlYwDClkQaKO.mDKmtmMbUygyvvARs9Uy7.7pkUo0Ee2', true, 'Robin', 'Arellano', 'robinare@gmail.com');
+insert into usuarios (user_name, user_password, enabled, nombre, apellidos, email) values ('argenitare', '$2a$10$0syuvatGMK6C1EkNoUNCoeD2r/1sjmXSYYM3se9R4yFq4U1L7uKDy', true, 'Argenit', 'Arellano', 'argenitare@gmail.com');
 
 insert into roles (role_name) values ('ROLE_ADMIN');
 insert into roles (role_name) values ('ROLE_USER');
