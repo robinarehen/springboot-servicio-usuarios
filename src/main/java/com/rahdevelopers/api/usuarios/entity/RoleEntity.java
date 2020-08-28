@@ -28,8 +28,4 @@ public class RoleEntity implements Serializable {
 	private Long ID;
 	@Column(name = "role_name", unique = true, length = 20)
 	private String roleName;
-	
-	//@ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
-	//private List<UsuarioEntity> usuarios;
-
 }
