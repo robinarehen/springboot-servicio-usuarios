@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.rahdevelopers.api.usuarios.entity.UsuarioEntity;
+import com.rahdevelopers.api.usuarios.dto.UsuarioDto;
 import com.rahdevelopers.api.usuarios.service.UsuarioServiceImpl;
 
 @RestController
@@ -15,7 +15,7 @@ public class UsuarioApiController {
 	private UsuarioServiceImpl serviceImpl;
 
 	@GetMapping("/findbyusername")
-	public UsuarioEntity getByUserName(@RequestParam("username") String userName) {
+	public UsuarioDto getByUserName(@RequestParam("username") String userName) {
 		return this.serviceImpl.findByUserName(userName);
 	}
 }
