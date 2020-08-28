@@ -1,37 +1,31 @@
 package com.rahdevelopers.api.usuarios.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.rahdevelopers.api.usuarios.dto.UsuarioDto;
 import com.rahdevelopers.api.usuarios.entity.UsuarioEntity;
-import com.rahdevelopers.api.usuarios.entity.UsuarioRoleEntity;
 import com.rahdevelopers.api.usuarios.repository.UsuarioRepository;
-import com.rahdevelopers.api.usuarios.repository.UsuarioRoleRepository;
 import com.rahdevelopers.api.usuarios.util.ObjectMapperUtil;
 
 @Service
-@Transactional(readOnly = true)
 public class UsuarioServiceImpl implements UsuarioService {
 
 	private UsuarioRepository usuarioRepository;
-	private UsuarioRoleRepository usuarioRoleRepository;
 	private ObjectMapperUtil mapperUtil;
 
 	@Value("${minimum-age}")
 	private Integer minimumAge;
 
-	public UsuarioServiceImpl(UsuarioRepository usuarioRepository, UsuarioRoleRepository usuarioRoleRepository,
-			ObjectMapperUtil mapperUtil) {
+	public UsuarioServiceImpl(UsuarioRepository usuarioRepository, ObjectMapperUtil mapperUtil) {
 		super();
 		this.usuarioRepository = usuarioRepository;
-		this.usuarioRoleRepository = usuarioRoleRepository;
 		this.mapperUtil = mapperUtil;
 	}
 
@@ -53,30 +47,42 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	public UsuarioDto create(UsuarioDto usuarioDto) {
 		// TODO Auto-generated method stub
-		if (!this.isValidBirthDate(usuarioDto)) {
-			throw new IllegalArgumentException("El usuario debe ser mayor de edad.");
-		}
-
 		if (this.usuarioRepository.findByUserName(usuarioDto.getUserName()).isPresent()) {
 			throw new IllegalArgumentException("El usuario ya existe.");
 		}
 
+		if (!this.isValidBirthDate(usuarioDto)) {
+			throw new IllegalArgumentException("El usuario debe ser mayor de edad.");
+		}
+
 		UsuarioEntity usuarioEntity = this.mapperUtil.dtoToEntity(UsuarioEntity.class, usuarioDto);
 
-		usuarioEntity = this.usuarioRepository.save(usuarioEntity);
-
-		this.createUsersRoles(usuarioEntity);
-
-		return this.mapperUtil.entityToDto(UsuarioDto.class, usuarioEntity);
+		return this.mapperUtil.entityToDto(UsuarioDto.class, this.usuarioRepository.save(usuarioEntity));
 	}
 
-	private void createUsersRoles(UsuarioEntity usuarioEntity) {
-		usuarioEntity.getRoles().stream().forEach(valueEntity -> {
-			UsuarioRoleEntity entity = new UsuarioRoleEntity();
-			entity.setUsuario(usuarioEntity.getID());
-			entity.setRole(valueEntity.getID());
-			this.usuarioRoleRepository.save(entity);
-		});
+	@Override
+	public UsuarioDto update(UsuarioDto usuarioDto) {
+		// TODO Auto-generated method stub
+		LocalDateTime createDate = this.usuarioRepository.findById(usuarioDto.getID())
+				.orElseThrow(() -> new IllegalArgumentException("Id Invalido")).getCreateDate();
+
+		if (!this.isValidBirthDate(usuarioDto)) {
+			throw new IllegalArgumentException("El usuario debe ser mayor de edad.");
+		}
+
+		UsuarioEntity usuarioEntity = this.mapperUtil.dtoToEntity(UsuarioEntity.class, usuarioDto);
+
+		usuarioEntity.setCreateDate(createDate);
+
+		return this.mapperUtil.entityToDto(UsuarioDto.class, this.usuarioRepository.save(usuarioEntity));
+	}
+
+	@Override
+	public void delete(Long id) {
+		// TODO Auto-generated method stub
+		UsuarioEntity entity = this.usuarioRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Id Invalido"));
+		entity.setEnabled(false);
+		this.usuarioRepository.save(entity);
 	}
 
 	/**

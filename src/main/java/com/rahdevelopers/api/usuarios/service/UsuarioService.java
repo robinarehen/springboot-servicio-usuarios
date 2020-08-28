@@ -11,4 +11,8 @@ public interface UsuarioService {
 	public List<UsuarioDto> getAll();
 
 	public UsuarioDto create(UsuarioDto usuarioDto);
+	
+	public UsuarioDto update(UsuarioDto usuarioDto);
+	
+	public void delete(Long id);
 }

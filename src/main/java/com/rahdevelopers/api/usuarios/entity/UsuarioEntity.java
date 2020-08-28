@@ -2,6 +2,7 @@ package com.rahdevelopers.api.usuarios.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -43,28 +45,28 @@ public class UsuarioEntity implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long ID;
 
-	@Column(unique = true, length = 20)
+	@Column(unique = true, nullable = false, length = 20)
 	private String userName;
 
-	@Column(length = 100)
+	@Column(length = 100, nullable = false)
 	private String userPassword;
 
 	private Boolean enabled;
 
-	@Column(length = 50)
+	@Column(nullable = false, length = 50)
 	private String nombre;
 
-	@Column(length = 100)
+	@Column(nullable = false, length = 100)
 	private String apellidos;
 
-	@Column(unique = true, length = 100)
+	@Column(unique = true, nullable = false, length = 100)
 	private String email;
 
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonDeserialize(using = LocalDateDeserializer.class)
 	private LocalDate birthDate;
 
-	private LocalDate createDate;
+	private LocalDateTime createDate;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "usuarios_roles",
@@ -76,9 +78,19 @@ public class UsuarioEntity implements Serializable {
 
 	@PrePersist
 	public void prePersist() {
-		this.createDate = LocalDate.now();
+		this.createDate = LocalDateTime.now();
 		this.userPassword = this.passwordEncoder().encode(this.userPassword);
-		this.enabled = true;
+		if (this.enabled == null) {
+			this.enabled = true;
+		}
+	}
+	
+	@PreUpdate
+	public void preUpdate() {
+		this.userPassword = this.passwordEncoder().encode(this.userPassword);
+		if(this.enabled == null) {
+			this.enabled = false;
+		}
 	}
 
 	@Bean
